@@ -1,0 +1,300 @@
+## Introduction – Minh Đức
+
+Hello everyone. Today, our group will present our project called **Personal To-Do List Manager**.
+
+Our project is written using **Bash shell scripting** in a UNIX/Linux environment.
+
+The purpose of this project is to help users manage their daily tasks directly from the terminal.
+
+Our program allows users to:
+
+* View tasks
+* Add new tasks
+* Mark tasks as completed
+* Delete tasks
+* Exit the program
+
+The task data is stored in a text file called `todo.txt`.
+
+---
+
+## Minh Đức – Core Functions
+
+My part is mainly responsible for the core functions of the program.
+
+First, I created the `storage()` function.
+
+```bash
+storage() {
+    if [ ! -f "$data" ]; then
+        touch "$data"
+    fi
+}
+```
+
+This function checks if the `todo.txt` file already exists.
+
+If the file does not exist, the program creates it using the `touch` command.
+
+---
+
+Next is the `add_task()` function.
+
+```bash
+add_task() {
+    local task="$1"
+```
+
+This function receives the task entered by the user.
+
+I use `local task` to store the task inside this function.
+
+Then the program checks if the task is empty.
+
+```bash
+if [ -z "$task" ]; then
+```
+
+If the user does not enter anything, the program shows an error message.
+
+For a valid task, I use the `date` command to save the current date and time.
+
+Then the task is saved into `todo.txt` with the status `[PENDING]`.
+
+For example:
+
+```text
+[PENDING] Finish assignment | 2026-08-13 11:30
+```
+
+---
+
+The next function is `update_task()`.
+
+This function allows the user to mark a task as completed.
+
+First, the program checks if the task list is empty.
+
+Then it counts how many tasks are currently stored using:
+
+```bash
+wc -l
+```
+
+The program also checks whether the task number entered by the user is valid.
+
+If the selected task is still `[PENDING]`, I use the `sed` command to change it to `[DONE]`.
+
+For example:
+
+```text
+[PENDING] Finish assignment
+```
+
+becomes:
+
+```text
+[DONE] Finish assignment
+```
+
+---
+
+The last core function is `delete_task()`.
+
+This function allows users to delete a task by its number.
+
+The program first validates the task number.
+
+Then this command deletes the selected line:
+
+```bash
+sed -i "${num}d" "$data"
+```
+
+After that, the program shows a success message.
+
+That is my main part of the project. Now Hoang Anh will explain the user interface and input validation.
+
+---
+
+## Hoang Anh Ly – CLI Menu and User Interface
+
+My part focuses on the **command-line interface, viewing tasks, and input validation**.
+
+First, I used `tput` to add colors to the terminal.
+
+For example:
+
+```bash
+GREEN=$(tput setaf 2)
+RED=$(tput setaf 1)
+CYAN=$(tput setaf 6)
+```
+
+Green is mainly used for successful actions, red for error messages, and cyan for the menu design.
+
+This makes the program easier for users to read.
+
+---
+
+Next is the `get_tasks()` function.
+
+```bash
+get_tasks() {
+    storage
+```
+
+This function displays all tasks stored in `todo.txt`.
+
+First, it checks if there are any tasks.
+
+If the file is empty, it displays:
+
+```text
+[INFO] No tasks in your list.
+```
+
+If tasks are available, I use:
+
+```bash
+nl -w2 -s ". " "$data"
+```
+
+The `nl` command adds numbers to each task.
+
+For example:
+
+```text
+1. [PENDING] Finish assignment
+2. [DONE] Study Bash
+```
+
+This helps users choose a task when they want to complete or delete it.
+
+---
+
+I also created the `validate_number()` function.
+
+Its purpose is to check user input.
+
+For example:
+
+```bash
+if [ -z "$input" ]; then
+```
+
+This checks if the input is empty.
+
+Then:
+
+```bash
+if ! [[ "$input" =~ ^[0-9]+$ ]]; then
+```
+
+This checks if the user entered a number.
+
+If the user enters something like:
+
+```text
+abc
+```
+
+the program displays:
+
+```text
+[ERROR] Please enter a number only.
+```
+
+This prevents invalid input from causing problems in the program.
+
+---
+
+Next is the `show_menu()` function.
+
+This function displays the main interface:
+
+```text
+========================================
+       PERSONAL TO-DO LIST MANAGER
+========================================
+1. View Tasks
+2. Add Task
+3. Complete Task
+4. Delete Task
+5. Exit
+========================================
+```
+
+The user can choose a number from 1 to 5.
+
+---
+
+Finally, I created the main program using:
+
+```bash
+while true
+```
+
+This keeps the program running until the user chooses Exit.
+
+Inside the loop, I use:
+
+```bash
+case "$choice" in
+```
+
+The `case` statement checks the user's choice.
+
+For example:
+
+* `1` calls `get_tasks`
+* `2` calls `add_task`
+* `3` calls `update_task`
+* `4` calls `delete_task`
+* `5` exits the program
+
+If the user enters an invalid choice, the program shows an error message.
+
+---
+
+## Demo
+
+For example, if I select:
+
+```text
+2
+```
+
+I can add a new task such as:
+
+```text
+Finish CPAN project
+```
+
+Then I choose:
+
+```text
+1
+```
+
+to view the task.
+
+The task will appear as `[PENDING]`.
+
+If I choose option `3` and select that task, it changes to `[DONE]`.
+
+If I choose option `4`, I can delete the task.
+
+Finally, option `5` closes the program.
+
+---
+
+## Conclusion – Either Member
+
+In conclusion, our Personal To-Do List Manager demonstrates how Bash shell scripting can be used to create a simple interactive application.
+
+We used commands and concepts such as functions, `if` statements, loops, `case`, `sed`, `wc`, `nl`, file handling, and input validation.
+
+The project allows users to manage tasks in a simple way directly from the terminal.
+
+Thank you for listening.
